@@ -2,12 +2,24 @@ server {
 	listen 80;
 	listen [::]:80;
 
+	server_name wordpress;
+	return 301 https://$host$request_uri;
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+
 	root /var/www/wordpress/;
 	index index.php index.html index.htm;
 
-	server_name localhost localhost.com;
+	server_name wordpress;
+
+	ssl_certificate /etc/nginx/ssl/certificat.pem;
+	ssl_certificate_key /etc/nginx/ssl/key.pem;
 
 	location / {
+		autoindex on;
 		try_files $uri $uri/ =404;
 	}
 

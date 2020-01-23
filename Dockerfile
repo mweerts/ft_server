@@ -6,7 +6,7 @@
 #    By: mweerts <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/01/23 18:56:07 by mweerts           #+#    #+#              #
-#    Updated: 2020/01/23 21:11:53 by mweerts          ###   ########.fr        #
+#    Updated: 2020/01/24 00:42:50 by mweerts          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,10 @@ RUN apt-get update \
 	&& apt-get install -y php-curl php-gd php-intl php-mbstring php-soap php-xml php-xmlrpc php-zip
 ADD ./srcs/ /home/
 
+#SSL
+
+RUN	mkdir /etc/nginx/ssl \
+	&& openssl req -x509 -newkey rsa:4096 -keyout /etc/nginx/ssl/key.pem -out /etc/nginx/ssl/certificat.pem -days 365 -nodes -subj '/CN=wordpress'
 #NGINX
 
 RUN	mkdir /var/www/wordpress \
@@ -52,8 +56,6 @@ RUN	wget https://wordpress.org/latest.tar.gz \
 	&& tar xzvf latest.tar.gz \
 	&& cp /home/wp-config.php ./wordpress/wp-config.php \
 	&& cp -a wordpress/. /var/www/wordpress
-
-EXPOSE 80
 
 CMD service php7.3-fpm start && service mysql start && service nginx restart && tail -f /dev/null
 
